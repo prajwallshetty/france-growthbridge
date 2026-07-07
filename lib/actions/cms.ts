@@ -68,7 +68,7 @@ export async function getBlogs() {
         subtitle: "How fractional engineering teams bridge complex layout execution with premium developer-first systems.",
         slug: "design-to-code-gap",
         content: "A detailed post about how modern design workflows can be translated directly into high-fidelity code components.",
-        author: "Prajwal Shetty",
+        author: "Izuddin Arfaz",
         image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80",
         readTime: 5,
         tags: ["Design", "Engineering"],
@@ -81,7 +81,7 @@ export async function getBlogs() {
         subtitle: "A deep dive into combining incremental static generation with flexible, dynamic administrator panels.",
         slug: "static-first-cms-pipeline",
         content: "We explore the architecture behind building performant web applications with sub-second page loads.",
-        author: "Prajwal Shetty",
+        author: "Izuddin Arfaz",
         image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80",
         readTime: 4,
         tags: ["Next.js", "CMS"],
@@ -94,7 +94,7 @@ export async function getBlogs() {
         subtitle: "Actionable steps to keep your user interfaces interactive and lightweight while loading dynamic media.",
         slug: "optimize-lcp-inp-dynamic-pages",
         content: "Practical tips on lazy loading components, image optimizations, and fine-tuning Framer Motion paints.",
-        author: "Prajwal Shetty",
+        author: "Izuddin Arfaz",
         image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
         readTime: 6,
         tags: ["Performance", "Core Web Vitals"],
@@ -155,7 +155,7 @@ export async function getTeamMembers() {
   if (list.length === 0) {
     const defaultTeam = [
       {
-        name: "Prajwal Shetty",
+        name: "Izuddin Arfaz",
         role: "Founder & Chief Architect",
         bio: "We started Growth Bridge because we kept watching good businesses get mediocre work from teams that thought like vendors instead of operators. Fifty-plus projects later, that's still the whole pitch.",
         image: "/founder.png",
@@ -527,8 +527,8 @@ export async function getSettings() {
     // Seed initial values
     settings = await Setting.create({
       contactEmail: "hello@growthbridge.live",
-      phoneNumber: "+91 62827 59863",
-      officeAddress: "100 Pine St, San Francisco, CA",
+      phoneNumber: "+49 176 31674057",
+      officeAddress: "Alt Moabit 58, 10555 Berlin, Germany",
       socialTwitter: "https://twitter.com/growthbridge",
       socialLinkedin: "https://linkedin.com/company/growthbridge",
       socialGithub: "https://github.com/growthbridge",

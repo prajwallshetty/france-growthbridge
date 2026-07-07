@@ -17,12 +17,12 @@ export default function LanguageSwitcher() {
         EN
       </button>
       <button
-        onClick={() => setLanguage("fr")}
+        onClick={() => setLanguage("de")}
         className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-          language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+          language === "de" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
         }`}
       >
-        FR
+        DE
       </button>
     </div>
   );

@@ -472,7 +472,7 @@ export default function BlogsCmsPage() {
                 required
                 value={formState.author}
                 onChange={handleFormChange}
-                placeholder="e.g. Prajwal Shetty"
+                placeholder="e.g. Izuddin Arfaz"
                 className="w-full h-12 px-4 bg-[#FCFBF8] border border-[#E9E3DA] rounded-[12px] text-[14px] font-medium outline-none focus:border-[#111111] transition-all"
               />
             </div>

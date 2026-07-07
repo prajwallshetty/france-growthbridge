@@ -173,9 +173,9 @@ export default function HomeClient({
   }, [loading]);
 
   // Configs with Fallbacks
-  const heroTitle = language === "fr" ? t("hero.title") : (homepage?.heroTitle || t("hero.title"));
-  const heroDescription = language === "fr" ? t("hero.desc") : (homepage?.heroDescription || t("hero.desc"));
-  const heroBtnText = language === "fr" ? t("hero.cta") : (homepage?.heroBtnText || t("hero.cta"));
+  const heroTitle = language === "de" ? t("hero.title") : (homepage?.heroTitle || t("hero.title"));
+  const heroDescription = language === "de" ? t("hero.desc") : (homepage?.heroDescription || t("hero.desc"));
+  const heroBtnText = language === "de" ? t("hero.cta") : (homepage?.heroBtnText || t("hero.cta"));
   const heroBtnUrl = homepage?.heroBtnUrl || "/contact";
 
   const showSelectedWork = homepage?.showSelectedWork !== false;
@@ -183,8 +183,8 @@ export default function HomeClient({
   const showTestimonials = homepage?.showTestimonials !== false;
 
   const contactEmail = settings?.contactEmail || "hello@growthbridge.live";
-  const phoneNumber = settings?.phoneNumber || "+91 62827 59863";
-  const officeAddress = settings?.officeAddress || "100 Pine St, San Francisco, CA";
+  const phoneNumber = settings?.phoneNumber || "+49 176 31674057";
+  const officeAddress = settings?.officeAddress || "Alt Moabit 58, 10555 Berlin, Germany";
   const socialTwitter = settings?.socialTwitter || "https://twitter.com/growthbridge";
   const socialLinkedin = settings?.socialLinkedin || "https://linkedin.com/company/growthbridge";
   const socialGithub = settings?.socialGithub || "https://github.com/growthbridge";
@@ -433,12 +433,12 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
                 EN
               </button>
               <button
-                onClick={() => setLanguage("fr")}
+                onClick={() => setLanguage("de")}
                 className={`px-2.5 py-1 rounded-full transition-colors ${
-                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                  language === "de" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
                 }`}
               >
-                FR
+                DE
               </button>
             </div>
 
@@ -529,12 +529,12 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
                         EN
                       </button>
                       <button
-                        onClick={() => setLanguage("fr")}
+                        onClick={() => setLanguage("de")}
                         className={`px-3 py-1 rounded-full transition-colors ${
-                          language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                          language === "de" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
                         }`}
                       >
-                        FR
+                        DE
                       </button>
                     </div>
                   </div>

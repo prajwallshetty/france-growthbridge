@@ -101,12 +101,12 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
                 EN
               </button>
               <button
-                onClick={() => setLanguage("fr")}
+                onClick={() => setLanguage("de")}
                 className={`px-2.5 py-1 rounded-full transition-colors ${
-                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                  language === "de" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
                 }`}
               >
-                FR
+                DE
               </button>
             </div>
 
@@ -144,9 +144,9 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
             </span>
             {categories.map((cat) => {
               let displayName = cat;
-              if (cat === "All") displayName = language === "fr" ? "Tous" : "All";
-              else if (cat === "Healthcare") displayName = language === "fr" ? "Santé" : "Healthcare";
-              else if (cat === "Other") displayName = language === "fr" ? "Autre" : "Other";
+              if (cat === "All") displayName = language === "de" ? "Alle" : "All";
+              else if (cat === "Healthcare") displayName = language === "de" ? "Gesundheitswesen" : "Healthcare";
+              else if (cat === "Other") displayName = language === "de" ? "Sonstige" : "Other";
               return (
                 <button
                   key={cat}
@@ -170,8 +170,8 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
         <div className="mx-auto max-w-[1280px] px-6 md:px-12">
           {filteredProjects.length === 0 ? (
             <div className="py-12 border border-dashed border-[#E9E3DA] rounded-[36px] text-center text-[#A8A296] text-[13px] font-semibold bg-white/40">
-              {language === "fr" 
-                ? "Aucun projet ne correspond à ce filtre." 
+              {language === "de" 
+                ? "Keine Projekte entsprechen diesem Filter." 
                 : "No projects match this filter."}
             </div>
           ) : (

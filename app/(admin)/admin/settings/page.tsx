@@ -112,7 +112,7 @@ export default function SettingsCmsPage() {
                 name="phoneNumber"
                 value={settings.phoneNumber || ""}
                 onChange={handleChange}
-                placeholder="e.g. +91 62827 59863"
+                placeholder="e.g. +49 176 31674057"
                 className="w-full h-12 px-4 bg-[#FCFBF8] border border-[#E9E3DA] rounded-[12px] text-[14px] font-medium outline-none focus:border-[#111111] transition-all"
               />
             </div>
@@ -127,7 +127,7 @@ export default function SettingsCmsPage() {
               name="officeAddress"
               value={settings.officeAddress || ""}
               onChange={handleChange}
-              placeholder="e.g. 100 Pine St, San Francisco, CA"
+              placeholder="e.g. Alt Moabit 58, 10555 Berlin, Germany"
               className="w-full h-12 px-4 bg-[#FCFBF8] border border-[#E9E3DA] rounded-[12px] text-[14px] font-medium outline-none focus:border-[#111111] transition-all"
             />
           </div>

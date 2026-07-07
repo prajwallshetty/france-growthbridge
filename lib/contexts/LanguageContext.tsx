@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { translations } from "../translations";
 
-type Language = "en" | "fr";
+type Language = "en" | "de";
 
 interface LanguageContextType {
   language: Language;
@@ -27,7 +27,7 @@ export function LanguageProvider({ children, defaultLanguage = "en" }: LanguageP
   // Load saved preference from localStorage/cookie
   useEffect(() => {
     const saved = localStorage.getItem("gb_locale") as Language;
-    if (saved === "en" || saved === "fr") {
+    if (saved === "en" || saved === "de") {
       if (saved !== language) {
         setLanguageState(saved);
       }

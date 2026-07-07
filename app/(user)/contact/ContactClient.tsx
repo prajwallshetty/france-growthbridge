@@ -32,8 +32,8 @@ function Reveal({
 export default function ContactClient({ settings }: { settings: any }) {
   const { language, setLanguage, t } = useLanguage();
   const contactEmail = settings?.contactEmail || "hello@growthbridge.live";
-  const phoneNumber = settings?.phoneNumber || "+91 62827 59863";
-  const officeAddress = settings?.officeAddress || "100 Pine St, San Francisco, CA";
+  const phoneNumber = settings?.phoneNumber || "+49 176 31674057";
+  const officeAddress = settings?.officeAddress || "Alt Moabit 58, 10555 Berlin, Germany";
 
   const [form, setForm] = useState({
     name: "",
@@ -129,12 +129,12 @@ export default function ContactClient({ settings }: { settings: any }) {
                 EN
               </button>
               <button
-                onClick={() => setLanguage("fr")}
+                onClick={() => setLanguage("de")}
                 className={`px-2.5 py-1 rounded-full transition-colors ${
-                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                  language === "de" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
                 }`}
               >
-                FR
+                DE
               </button>
             </div>
 

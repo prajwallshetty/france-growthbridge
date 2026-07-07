@@ -44,7 +44,7 @@ export default async function UserRootLayout({
 }>) {
   const settings = await getSettings().catch(() => null);
   const cookieStore = await cookies();
-  const lang = (cookieStore.get("gb_locale")?.value || "en") as "en" | "fr";
+  const lang = (cookieStore.get("gb_locale")?.value || "en") as "en" | "de";
 
   return (
     <html lang={lang} className={inter.variable}>
@@ -78,7 +78,7 @@ export default async function UserRootLayout({
 
               <div className="mt-8 pt-6 border-t border-[#E9E3DA] w-full flex flex-col gap-1.5 text-[13px] font-semibold text-[#6A6A6A]">
                 <span>Email: <a href={`mailto:${settings?.contactEmail || "hello@growthbridge.live"}`} className="text-[#111111] hover:underline font-bold">{settings?.contactEmail || "hello@growthbridge.live"}</a></span>
-                <span>Phone: <span className="text-[#111111] font-bold">{settings?.phoneNumber || "+91 62827 59863"}</span></span>
+                <span>Phone: <span className="text-[#111111] font-bold">{settings?.phoneNumber || "+49 176 31674057"}</span></span>
               </div>
             </div>
 

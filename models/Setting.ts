@@ -3,8 +3,8 @@ import mongoose, { Schema } from "mongoose";
 const SettingSchema = new Schema(
   {
     contactEmail: { type: String, default: "hello@growthbridge.live" },
-    phoneNumber: { type: String, default: "+91 62827 59863" },
-    officeAddress: { type: String, default: "100 Pine St, San Francisco, CA" },
+    phoneNumber: { type: String, default: "+49 176 31674057" },
+    officeAddress: { type: String, default: "Alt Moabit 58, 10555 Berlin, Germany" },
     socialTwitter: { type: String, default: "https://twitter.com/growthbridge" },
     socialLinkedin: { type: String, default: "https://linkedin.com/company/growthbridge" },
     socialGithub: { type: String, default: "https://github.com/growthbridge" },

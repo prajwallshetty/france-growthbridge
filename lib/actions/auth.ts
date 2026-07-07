@@ -28,7 +28,7 @@ export async function login(formData: FormData) {
     
     if (!defaultAdmin) {
       await User.create({
-        name: "Prajwal Shetty",
+        name: "Izuddin Arfaz",
         email: defaultEmail.toLowerCase(),
         password: hashedDefaultPassword,
         role: "Super Admin",

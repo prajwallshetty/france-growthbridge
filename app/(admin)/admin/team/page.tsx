@@ -298,7 +298,7 @@ export default function AdminTeamPage() {
                   <input
                     type="text"
                     required
-                    placeholder="Prajwal Shetty"
+                    placeholder="Izuddin Arfaz"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     className="w-full bg-[#FCFBF8] border border-[#E9E3DA] rounded-[12px] px-4 py-3 text-[13px] text-[#111111] font-semibold focus:outline-none focus:border-[#111111] transition-all"
