@@ -28,8 +28,6 @@ export async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-export default proxy;
-
 export const config = {
   matcher: ["/admin/:path*"],
 };
