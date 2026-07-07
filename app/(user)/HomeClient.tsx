@@ -54,10 +54,13 @@ function CountUp({
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [val, setVal] = useState(0);
+  const [val, setVal] = useState(to);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView) {
+      setVal(to);
+      return;
+    }
     let start: number | null = null;
     let raf: number;
     const step = (ts: number) => {
@@ -453,18 +456,42 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
 
         {/* ═══════════ Mobile Navigation ═══════════ */}
         <div className="flex w-full justify-center lg:hidden relative z-50">
-          <div className="w-[calc(100%-2rem)] max-w-[480px] flex items-center justify-between px-5 py-2.5 bg-[#FCFBF8]/95 border border-[#E9E3DA] backdrop-blur-md rounded-full shadow-lg mt-4">
-            <a href="#top" className="flex items-center gap-1.5 shrink-0">
+          <div className="w-[calc(100%-2rem)] max-w-[480px] flex items-center justify-between gap-2 px-4 py-2.5 bg-[#FCFBF8]/95 border border-[#E9E3DA] backdrop-blur-md rounded-full shadow-lg mt-4">
+            <a href="#top" className="flex min-w-0 items-center gap-1.5 shrink">
               <span className="text-[15px] font-extrabold tracking-tight text-[#111111]">Growth Bridge</span>
               <span className="h-1.5 w-1.5 rounded-full bg-[#F4C542] animate-pulse" />
             </a>
-            <button
-              className="h-9 w-9 flex items-center justify-center text-[#111111] hover:bg-[#111111]/5 rounded-full border border-[#E9E3DA] transition-all"
-              onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu size={16} />
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="flex items-center gap-1 rounded-full border border-[#E9E3DA] bg-white p-1 text-[10px] font-bold shadow-sm">
+                <button
+                  onClick={() => setLanguage("en")}
+                  aria-label="Switch language to English"
+                  aria-pressed={language === "en"}
+                  className={`rounded-full px-2 py-1 transition-colors ${
+                    language === "en" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLanguage("fr")}
+                  aria-label="Switch language to French"
+                  aria-pressed={language === "fr"}
+                  className={`rounded-full px-2 py-1 transition-colors ${
+                    language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                  }`}
+                >
+                  FR
+                </button>
+              </div>
+              <button
+                className="h-9 w-9 flex items-center justify-center text-[#111111] hover:bg-[#111111]/5 rounded-full border border-[#E9E3DA] transition-all"
+                onClick={() => setIsMobileMenuOpen(true)}
+                aria-label="Open menu"
+              >
+                <Menu size={16} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1531,4 +1558,3 @@ function ContactCta({ contactEmail, heroBtnUrl }: { contactEmail: string; heroBt
     </section>
   );
 }
-
