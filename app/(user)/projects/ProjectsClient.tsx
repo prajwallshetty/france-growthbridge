@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowUpRight, Sparkles, Filter } from "lucide-react";
 import SideRays from "@/components/ui/SideRays";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
-import { useLanguage, LanguageSwitcher } from "@/components/LanguageProvider";
-import { t, translateSeeded } from "@/lib/translations";
+import { useLanguage } from "@/lib/contexts/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -16,49 +15,40 @@ interface ProjectsClientProps {
 }
 
 export default function ProjectsClient({ projects, settings }: { projects: any[]; settings: any }) {
-  const { language } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [filter, setFilter] = useState("All");
 
-  const displayProjects = (projects || []).map((p) => {
-    const rawCategory = p.category || "General";
-    let filterCategory = "Other";
-    if (rawCategory.toLowerCase().includes("commerce") || rawCategory.toLowerCase().includes("dtc")) filterCategory = "E-commerce";
-    else if (rawCategory.toLowerCase().includes("saas") || rawCategory.toLowerCase().includes("product")) filterCategory = "SaaS";
-    else if (rawCategory.toLowerCase().includes("health") || rawCategory.toLowerCase().includes("clinic")) filterCategory = "Healthcare";
+  const displayProjects = (projects || []).map((p) => ({
+    title: p.title,
+    category: p.category || "General",
+    description: p.description,
+    result: p.resultMetric || "+100% impact",
+    image: p.image || "/project-pulse.png",
+    liveUrl: p.liveUrl || "",
+    projectType: p.projectType || "customised",
+  }));
 
-    return {
-      title: translateSeeded(p.title, language),
-      category: translateSeeded(rawCategory, language),
-      description: translateSeeded(p.description, language),
-      result: translateSeeded(p.resultMetric || "+100% impact", language),
-      image: p.image || "/project-pulse.png",
-      liveUrl: p.liveUrl || "",
-      projectType: p.projectType || "customised",
-      filterCategory,
-    };
-  });
-
-  // Extract unique categories
-  const rawCategories = ["All", ...Array.from(new Set(displayProjects.map((p) => p.filterCategory)))];
-  const categories = rawCategories.map(cat => {
-    if (cat === "All") return language === "fr" ? "Tous" : "All";
-    if (cat === "Healthcare") return language === "fr" ? "Santé" : "Healthcare";
-    if (cat === "Other") return language === "fr" ? "Autre" : "Other";
-    return cat;
-  });
+  // Extract unique categories (lowercased/normalized for filtering)
+  const categories = ["All", ...Array.from(new Set(displayProjects.map((p) => {
+    if (p.category.toLowerCase().includes("commerce") || p.category.toLowerCase().includes("dtc")) return "E-commerce";
+    if (p.category.toLowerCase().includes("saas") || p.category.toLowerCase().includes("product")) return "SaaS";
+    if (p.category.toLowerCase().includes("health") || p.category.toLowerCase().includes("clinic")) return "Healthcare";
+    return "Other";
+  })))];
 
   const filteredProjects = displayProjects.filter((p) => {
-    if (filter === "All" || filter === "Tous") return true;
-    
-    let targetFilter = filter;
-    if (filter === "Santé") targetFilter = "Healthcare";
-    if (filter === "Autre") targetFilter = "Other";
-    
-    return p.filterCategory === targetFilter;
+    if (filter === "All") return true;
+    const cat = p.category.toLowerCase();
+    if (filter === "E-commerce") return cat.includes("commerce") || cat.includes("dtc");
+    if (filter === "SaaS") return cat.includes("saas") || cat.includes("product");
+    if (filter === "Healthcare") return cat.includes("health") || cat.includes("clinic");
+    if (filter === "Other") {
+      return !cat.includes("commerce") && !cat.includes("dtc") && !cat.includes("saas") && !cat.includes("product") && !cat.includes("health") && !cat.includes("clinic");
+    }
+    return true;
   });
 
-  const preBuiltProjects = filteredProjects.filter((p) => p.projectType === "pre-built");
-  const customisedProjects = filteredProjects.filter((p) => p.projectType === "customised");
+
 
   return (
     <main className="min-h-screen bg-[#FCFBF8] text-[#111111] relative overflow-hidden pb-24">
@@ -99,13 +89,32 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
             <span className="text-[17px] font-bold tracking-tight text-[#111111]">Growth Bridge</span>
           </a>
 
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-3.5">
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1 rounded-full border border-[#E9E3DA] bg-white p-1 text-[11px] font-bold shadow-sm">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "en" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("fr")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                FR
+              </button>
+            </div>
+
             <a
               href="/"
               className="inline-flex items-center gap-2 rounded-full border border-[#E9E3DA] bg-white px-5 py-2 text-[13px] font-bold text-[#111111] hover:border-[#111111] transition-all"
             >
-              <ArrowLeft size={14} /> {t("backToHome", language)}
+              <ArrowLeft size={14} /> {t("subpages.backToHome")}
             </a>
           </div>
         </div>
@@ -115,13 +124,13 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
       <section className="pt-32 pb-12 relative z-20">
         <div className="mx-auto max-w-[1280px] px-6 md:px-12 text-center sm:text-left">
           <span className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#6A6A6A]">
-            <Sparkles size={13} className="text-[#F4C542]" /> {translateSeeded("Portfolio", language)}
+            <Sparkles size={13} className="text-[#F4C542]" /> {t("subpages.projects.portfolio")}
           </span>
           <h1 className="mt-4 text-[clamp(36px,5vw,64px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-            {translateSeeded("Selected engineering & design archives.", language)}
+            {t("subpages.projects.title")}
           </h1>
           <p className="mt-6 max-w-[580px] text-[16px] leading-[1.75] text-[#6A6A6A]">
-            {translateSeeded("A comprehensive look at our builds — storefronts, medical booking channels, complex dashboards, and SaaS design systems engineered for high performance.", language)}
+            {t("subpages.projects.desc")}
           </p>
         </div>
       </section>
@@ -131,41 +140,39 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
         <div className="mx-auto max-w-[1280px] px-6 md:px-12">
           <div className="flex flex-wrap gap-2.5 items-center">
             <span className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#A8A296] mr-2 flex items-center gap-1.5">
-              <Filter size={13} /> {language === "fr" ? "Filtrer :" : "Filter:"}
+              <Filter size={13} /> {t("subpages.projects.filter")}
             </span>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-4 py-2 text-[13px] font-bold rounded-full border transition-all ${
-                  filter === cat
-                    ? "bg-[#111111] text-white border-[#111111]"
-                    : "bg-white text-[#6A6A6A] border-[#E9E3DA] hover:border-[#111111]"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              let displayName = cat;
+              if (cat === "All") displayName = language === "fr" ? "Tous" : "All";
+              else if (cat === "Healthcare") displayName = language === "fr" ? "Santé" : "Healthcare";
+              else if (cat === "Other") displayName = language === "fr" ? "Autre" : "Other";
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={`px-4 py-2 text-[13px] font-bold rounded-full border transition-all ${
+                    filter === cat
+                      ? "bg-[#111111] text-white border-[#111111]"
+                      : "bg-white text-[#6A6A6A] border-[#E9E3DA] hover:border-[#111111]"
+                  }`}
+                >
+                  {displayName}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Pre-built Projects Section */}
+      {/* Projects Grid Section */}
       <section className="relative z-20 pb-16">
         <div className="mx-auto max-w-[1280px] px-6 md:px-12">
-          <div className="flex flex-col mb-10">
-            <h2 className="text-[28px] md:text-[36px] font-black tracking-tight text-[#111111] flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#F4C542] shrink-0" />
-              {translateSeeded("Pre-built Solutions", language)}
-            </h2>
-            <p className="text-[14px] text-[#6A6A6A] mt-2 max-w-[600px] leading-relaxed">
-              {translateSeeded("Production-ready templates, starter architectures, and component systems designed to kickstart your next digital experience with zero overhead.", language)}
-            </p>
-          </div>
-
-          {preBuiltProjects.length === 0 ? (
+          {filteredProjects.length === 0 ? (
             <div className="py-12 border border-dashed border-[#E9E3DA] rounded-[36px] text-center text-[#A8A296] text-[13px] font-semibold bg-white/40">
-              {language === "fr" ? "Aucune solution pré-intégrée ne correspond à ce filtre." : "No pre-built solutions match this filter."}
+              {language === "fr" 
+                ? "Aucun projet ne correspond à ce filtre." 
+                : "No projects match this filter."}
             </div>
           ) : (
             <motion.div
@@ -173,7 +180,7 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
               className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
             >
               <AnimatePresence mode="popLayout">
-                {preBuiltProjects.map((p) => (
+                {filteredProjects.map((p) => (
                   <motion.div
                     layout
                     key={p.title}
@@ -235,106 +242,7 @@ export default function ProjectsClient({ projects, settings }: { projects: any[]
                               rel="noopener noreferrer"
                               className="px-5 py-2.5 rounded-full bg-[#111111] hover:bg-[#F4C542] text-white hover:text-[#111111] text-[12px] font-bold border border-[#111111] hover:border-[#F4C542] transition-all duration-300 shadow-sm shrink-0"
                             >
-                              {language === "fr" ? "Voir démo ↗" : "View Demo ↗"}
-                            </CardItem>
-                          )}
-                        </div>
-                      </CardBody>
-                    </CardContainer>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* Customised Projects Section */}
-      <section className="relative z-20 pb-16">
-        <div className="mx-auto max-w-[1280px] px-6 md:px-12">
-          <div className="flex flex-col mb-10 pt-10 border-t border-[#E9E3DA]/60">
-            <h2 className="text-[28px] md:text-[36px] font-black tracking-tight text-[#111111] flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#111111] shrink-0" />
-              {translateSeeded("Customised Implementations", language)}
-            </h2>
-            <p className="text-[14px] text-[#6A6A6A] mt-2 max-w-[600px] leading-relaxed">
-              {translateSeeded("Tailor-made designs, deep custom backend integrations, and bespoke digital assets crafted to meet unique business challenges and scale seamlessly.", language)}
-            </p>
-          </div>
-
-          {customisedProjects.length === 0 ? (
-            <div className="py-12 border border-dashed border-[#E9E3DA] rounded-[36px] text-center text-[#A8A296] text-[13px] font-semibold bg-white/40">
-              {language === "fr" ? "Aucune intégration sur mesure ne correspond à ce filtre." : "No customised implementations match this filter."}
-            </div>
-          ) : (
-            <motion.div
-              layout
-              className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"
-            >
-              <AnimatePresence mode="popLayout">
-                {customisedProjects.map((p) => (
-                  <motion.div
-                    layout
-                    key={p.title}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.45, ease: EASE }}
-                  >
-                    <CardContainer containerClassName="py-4">
-                      <CardBody className="bg-[#FFFFFF]/80 backdrop-blur-md relative group/card hover:shadow-3xl hover:border-[#111111]/30 transition-all duration-500 border border-[#E9E3DA] w-full max-w-full sm:w-[32rem] h-auto rounded-[36px] p-8 lg:p-10 flex flex-col gap-5">
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="flex flex-col">
-                            <CardItem
-                              translateZ="50"
-                              className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-[#F4C542]"
-                            >
-                              {p.category}
-                            </CardItem>
-                            <CardItem
-                              translateZ="60"
-                              className="text-2xl font-black text-[#111111] tracking-tight mt-1 transition-colors"
-                            >
-                              {p.title}
-                            </CardItem>
-                          </div>
-                          <CardItem
-                            translateZ="70"
-                            className="px-3.5 py-1.5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.06em] text-[#111111] bg-[#F4C542] border border-[#111111]/10 shadow-[0_4px_12px_rgba(244,197,66,0.15)] shrink-0"
-                          >
-                            {p.result}
-                          </CardItem>
-                        </div>
-
-                        <CardItem
-                          translateZ="80"
-                          className="w-full overflow-hidden rounded-[20px] border border-[#E9E3DA] relative mt-2"
-                        >
-                          <img
-                            src={p.image}
-                            className="h-64 w-full object-cover transform group-hover/card:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                            alt={p.title}
-                          />
-                        </CardItem>
-
-                        <CardItem
-                          translateZ="50"
-                          className="text-[#6A6A6A] text-[14px] leading-[1.65] font-medium"
-                        >
-                          {p.description}
-                        </CardItem>
-                        
-                        <div className="flex justify-end gap-2.5 mt-4 pt-4 border-t border-[#E9E3DA]/60">
-                          {p.liveUrl && (
-                            <CardItem
-                              translateZ="60"
-                              as="a"
-                              href={p.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-5 py-2.5 rounded-full bg-[#111111] hover:bg-[#F4C542] text-white hover:text-[#111111] text-[12px] font-bold border border-[#111111] hover:border-[#F4C542] transition-all duration-300 shadow-sm shrink-0"
-                            >
-                              {language === "fr" ? "Voir démo ↗" : "View Demo ↗"}
+                              {t("work.demo")}
                             </CardItem>
                           )}
                         </div>

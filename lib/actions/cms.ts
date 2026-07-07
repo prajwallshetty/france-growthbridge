@@ -68,7 +68,7 @@ export async function getBlogs() {
         subtitle: "How fractional engineering teams bridge complex layout execution with premium developer-first systems.",
         slug: "design-to-code-gap",
         content: "A detailed post about how modern design workflows can be translated directly into high-fidelity code components.",
-        author: "Mohammed Aiman",
+        author: "Prajwal Shetty",
         image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80",
         readTime: 5,
         tags: ["Design", "Engineering"],
@@ -81,7 +81,7 @@ export async function getBlogs() {
         subtitle: "A deep dive into combining incremental static generation with flexible, dynamic administrator panels.",
         slug: "static-first-cms-pipeline",
         content: "We explore the architecture behind building performant web applications with sub-second page loads.",
-        author: "Mohammed Aiman",
+        author: "Prajwal Shetty",
         image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80",
         readTime: 4,
         tags: ["Next.js", "CMS"],
@@ -94,7 +94,7 @@ export async function getBlogs() {
         subtitle: "Actionable steps to keep your user interfaces interactive and lightweight while loading dynamic media.",
         slug: "optimize-lcp-inp-dynamic-pages",
         content: "Practical tips on lazy loading components, image optimizations, and fine-tuning Framer Motion paints.",
-        author: "Mohammed Aiman",
+        author: "Prajwal Shetty",
         image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
         readTime: 6,
         tags: ["Performance", "Core Web Vitals"],
@@ -155,14 +155,12 @@ export async function getTeamMembers() {
   if (list.length === 0) {
     const defaultTeam = [
       {
-        name: "Mohammed Aiman",
+        name: "Prajwal Shetty",
         role: "Founder & Chief Architect",
         bio: "We started Growth Bridge because we kept watching good businesses get mediocre work from teams that thought like vendors instead of operators. Fifty-plus projects later, that's still the whole pitch.",
         image: "/founder.png",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com",
-        email: "growthbridge16@gmail.com",
+        instagram: "https://instagram.com",
+        email: "hello@growthbridge.live",
         featured: true,
         order: 0,
       },
@@ -171,9 +169,7 @@ export async function getTeamMembers() {
         role: "Lead Product Designer",
         bio: "Designing digital experiences that bridge brand strategy with production-ready frontends. Former designer at Stripe and Vercel.",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com",
+        instagram: "https://instagram.com",
         email: "sarah@growthbridge.studio",
         featured: true,
         order: 1,
@@ -183,9 +179,7 @@ export async function getTeamMembers() {
         role: "Senior Fullstack Engineer",
         bio: "Specializing in low-latency Next.js integrations, dynamic content pipelines, and clean API structure. Obsessed with sub-second page performance.",
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com",
+        instagram: "https://instagram.com",
         email: "alex@growthbridge.studio",
         featured: true,
         order: 2,
@@ -244,7 +238,6 @@ export async function getProjects() {
         image: "/project-northstar.png",
         liveUrl: "https://northstar.growthbridge.studio",
         featured: true,
-        projectType: "pre-built",
       },
       {
         title: "Atlas Clinics",
@@ -254,7 +247,6 @@ export async function getProjects() {
         image: "/project-atlas.png",
         liveUrl: "https://atlas.growthbridge.studio",
         featured: true,
-        projectType: "customised",
       },
       {
         title: "Pulse SaaS",
@@ -264,7 +256,6 @@ export async function getProjects() {
         image: "/project-pulse.png",
         liveUrl: "https://pulse.growthbridge.studio",
         featured: true,
-        projectType: "pre-built",
       },
       {
         title: "Loam & Co.",
@@ -274,7 +265,6 @@ export async function getProjects() {
         image: "/why-growthbridge.png",
         liveUrl: "https://loam.growthbridge.studio",
         featured: false,
-        projectType: "customised",
       },
     ];
     await Project.insertMany(defaultProjects);
@@ -536,9 +526,9 @@ export async function getSettings() {
   if (!settings) {
     // Seed initial values
     settings = await Setting.create({
-      contactEmail: "growthbridge16@gmail.com",
-      phoneNumber: "+33 744896755",
-      officeAddress: "121 avenue general frere 69008 Lyon France",
+      contactEmail: "hello@growthbridge.live",
+      phoneNumber: "+91 62827 59863",
+      officeAddress: "100 Pine St, San Francisco, CA",
       socialTwitter: "https://twitter.com/growthbridge",
       socialLinkedin: "https://linkedin.com/company/growthbridge",
       socialGithub: "https://github.com/growthbridge",

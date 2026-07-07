@@ -4,8 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Mail, Phone, MapPin, Sparkles, Send, CheckCircle } from "lucide-react";
 import SideRays from "@/components/ui/SideRays";
-import { useLanguage, LanguageSwitcher } from "@/components/LanguageProvider";
-import { t, translateSeeded } from "@/lib/translations";
+import { useLanguage } from "@/lib/contexts/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -31,18 +30,16 @@ function Reveal({
 }
 
 export default function ContactClient({ settings }: { settings: any }) {
-  const { language } = useLanguage();
-  const contactEmail = settings?.contactEmail || "growthbridge16@gmail.com";
-  const phoneNumber = settings?.phoneNumber || "+33 744896755";
-  const officeAddress = translateSeeded(settings?.officeAddress || "121 avenue general frere 69008 Lyon France", language);
-
-  const budgets = ["< 10k €", "10k € – 25k €", "25k € – 50k €", "50k €+"];
+  const { language, setLanguage, t } = useLanguage();
+  const contactEmail = settings?.contactEmail || "hello@growthbridge.live";
+  const phoneNumber = settings?.phoneNumber || "+91 62827 59863";
+  const officeAddress = settings?.officeAddress || "100 Pine St, San Francisco, CA";
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     company: "",
-    budget: "10k € – 25k €",
+    budget: "$10k – $25k",
     message: "",
   });
 
@@ -50,15 +47,17 @@ export default function ContactClient({ settings }: { settings: any }) {
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  const budgets = ["<$10k", "$10k – $25k", "$25k – $50k", "$50k+"];
+
   const validate = () => {
     const errs: { [key: string]: string } = {};
-    if (!form.name.trim()) errs.name = t("nameRequired", language);
+    if (!form.name.trim()) errs.name = t("subpages.contact.errName");
     if (!form.email.trim()) {
-      errs.email = t("emailRequired", language);
+      errs.email = t("subpages.contact.errEmail");
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      errs.email = t("emailInvalid", language);
+      errs.email = t("subpages.contact.errEmailInvalid");
     }
-    if (!form.message.trim()) errs.message = t("scopeRequired", language);
+    if (!form.message.trim()) errs.message = t("subpages.contact.errMessage");
     return errs;
   };
 
@@ -118,13 +117,32 @@ export default function ContactClient({ settings }: { settings: any }) {
             <span className="text-[17px] font-bold tracking-tight text-[#111111]">Growth Bridge</span>
           </a>
 
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-3.5">
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1 rounded-full border border-[#E9E3DA] bg-white p-1 text-[11px] font-bold shadow-sm">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "en" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("fr")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                FR
+              </button>
+            </div>
+
             <a
               href="/"
               className="inline-flex items-center gap-2 rounded-full border border-[#E9E3DA] bg-white px-5 py-2 text-[13px] font-bold text-[#111111] hover:border-[#111111] transition-all"
             >
-              <ArrowLeft size={14} /> {t("backToHome", language)}
+              <ArrowLeft size={14} /> {t("subpages.backToHome")}
             </a>
           </div>
         </div>
@@ -138,13 +156,13 @@ export default function ContactClient({ settings }: { settings: any }) {
           <div className="flex flex-col gap-10">
             <Reveal>
               <span className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#6A6A6A]">
-                <Sparkles size={13} className="text-[#F4C542]" /> {t("reachOut", language)}
+                <Sparkles size={13} className="text-[#F4C542]" /> {t("subpages.contact.reachOut")}
               </span>
               <h1 className="mt-4 text-[48px] md:text-[60px] font-extrabold leading-[1.05] tracking-[-0.03em]">
-                {t("talkSpecs", language)}
+                {t("subpages.contact.letstalk")}
               </h1>
               <p className="mt-6 text-[15px] leading-[1.75] text-[#6A6A6A] max-w-[420px]">
-                {t("contactDesc", language)}
+                {t("subpages.contact.desc")}
               </p>
             </Reveal>
 
@@ -156,7 +174,7 @@ export default function ContactClient({ settings }: { settings: any }) {
                     <Mail size={16} />
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8A296]">{t("emailUs", language)}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8A296]">{t("subpages.contact.emailUs")}</span>
                     <p className="text-[14px] font-bold text-[#111111] mt-0.5">{contactEmail}</p>
                   </div>
                 </div>
@@ -168,7 +186,7 @@ export default function ContactClient({ settings }: { settings: any }) {
                     <Phone size={16} />
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8A296]">{t("callUs", language)}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8A296]">{t("subpages.contact.callUs")}</span>
                     <p className="text-[14px] font-bold text-[#111111] mt-0.5">{phoneNumber}</p>
                   </div>
                 </div>
@@ -180,7 +198,7 @@ export default function ContactClient({ settings }: { settings: any }) {
                     <MapPin size={16} />
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8A296]">{t("studioLocation", language)}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8A296]">{t("subpages.contact.location")}</span>
                     <p className="text-[14px] font-bold text-[#111111] mt-0.5">{officeAddress}</p>
                   </div>
                 </div>
@@ -205,11 +223,11 @@ export default function ContactClient({ settings }: { settings: any }) {
                     {/* Name input */}
                     <div className="flex flex-col gap-2">
                       <label className="text-[12px] font-bold uppercase tracking-wider text-[#111111]">
-                        {t("whatsYourName", language)}
+                        {t("subpages.contact.nameLabel")}
                       </label>
                       <input
                         type="text"
-                        placeholder={language === "fr" ? "Jean Dupont" : "John Doe"}
+                        placeholder="John Doe"
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                         className={`w-full bg-[#FCFBF8] border rounded-[12px] px-4 py-3 text-[14px] text-[#111111] font-semibold focus:outline-none focus:border-[#111111] transition-all ${errors.name ? "border-red-500" : "border-[#E9E3DA]"
@@ -221,7 +239,7 @@ export default function ContactClient({ settings }: { settings: any }) {
                     {/* Email input */}
                     <div className="flex flex-col gap-2">
                       <label className="text-[12px] font-bold uppercase tracking-wider text-[#111111]">
-                        {t("yourEmailAddress", language)}
+                        {t("subpages.contact.emailLabel")}
                       </label>
                       <input
                         type="email"
@@ -238,11 +256,11 @@ export default function ContactClient({ settings }: { settings: any }) {
                   {/* Company Input */}
                   <div className="flex flex-col gap-2">
                     <label className="text-[12px] font-bold uppercase tracking-wider text-[#111111]">
-                      {t("companyOptional", language)}
+                      {t("subpages.contact.companyLabel")}
                     </label>
                     <input
                       type="text"
-                      placeholder={language === "fr" ? "Entreprise Inc." : "Acme Corp"}
+                      placeholder="Acme Corp"
                       value={form.company}
                       onChange={(e) => setForm({ ...form, company: e.target.value })}
                       className="w-full bg-[#FCFBF8] border border-[#E9E3DA] rounded-[12px] px-4 py-3 text-[14px] text-[#111111] font-semibold focus:outline-none focus:border-[#111111] transition-all"
@@ -252,7 +270,7 @@ export default function ContactClient({ settings }: { settings: any }) {
                   {/* Budget Selector */}
                   <div className="flex flex-col gap-2">
                     <label className="text-[12px] font-bold uppercase tracking-wider text-[#111111]">
-                      {t("expectedBudget", language)}
+                      {t("subpages.contact.budgetLabel")}
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-1">
                       {budgets.map((b) => {
@@ -277,11 +295,11 @@ export default function ContactClient({ settings }: { settings: any }) {
                   {/* Message Input */}
                   <div className="flex flex-col gap-2">
                     <label className="text-[12px] font-bold uppercase tracking-wider text-[#111111]">
-                      {t("describeScope", language)}
+                      {t("subpages.contact.scopeLabel")}
                     </label>
                     <textarea
                       rows={4}
-                      placeholder={language === "fr" ? "Nous devons concevoir une page de destination performante et une interface Next.js épurée..." : "We need to build a converting landing page and a clean Next.js dashboard by the end of Q3..."}
+                      placeholder={t("subpages.contact.scopePlaceholder")}
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       className={`w-full bg-[#FCFBF8] border rounded-[12px] px-4 py-3 text-[14px] text-[#111111] font-semibold focus:outline-none focus:border-[#111111] transition-all resize-none ${errors.message ? "border-red-500" : "border-[#E9E3DA]"
@@ -297,10 +315,10 @@ export default function ContactClient({ settings }: { settings: any }) {
                     className="w-full flex items-center justify-center gap-2 py-4 bg-[#111111] hover:bg-[#F4C542] text-white hover:text-[#111111] font-bold text-[14px] rounded-full transition-all cursor-pointer shadow-md disabled:opacity-60 disabled:cursor-not-allowed group"
                   >
                     {loading ? (
-                      <span>{t("sendingInquiry", language)}</span>
+                      <span>{t("subpages.contact.sendingBtn")}</span>
                     ) : (
                       <>
-                        <span>{t("submitInquiry", language)}</span>
+                        <span>{t("subpages.contact.submitBtn")}</span>
                         <Send size={15} className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </>
                     )}
@@ -318,28 +336,20 @@ export default function ContactClient({ settings }: { settings: any }) {
                     <CheckCircle size={32} />
                   </div>
                   <h3 className="text-[24px] font-extrabold tracking-tight text-[#111111]">
-                    {t("messageSent", language)}
+                    {t("subpages.contact.successTitle")}
                   </h3>
                   <p className="mt-4 text-[14px] text-[#6A6A6A] leading-[1.7] max-w-[340px]">
-                    {language === "fr" ? (
-                      <>
-                        Merci d'avoir contacté Growth Bridge ! Mohammed Aiman ou un membre de notre équipe vous recontactera directement à l'adresse <span className="text-[#111111] font-bold">{form.email}</span> sous 24 heures.
-                      </>
-                    ) : (
-                      <>
-                        Thank you for reaching out to Growth Bridge! Mohammed Aiman or a member of the team will follow up directly at <span className="text-[#111111] font-bold">{form.email}</span> within 24 hours.
-                      </>
-                    )}
+                    {t("subpages.contact.successDesc")} <span className="text-[#111111] font-bold">{form.email}</span> {t("subpages.contact.successDescSuffix")}
                   </p>
 
                   <button
                     onClick={() => {
                       setSuccess(false);
-                      setForm({ name: "", email: "", company: "", budget: "10k € – 25k €", message: "" });
+                      setForm({ name: "", email: "", company: "", budget: "$10k – $25k", message: "" });
                     }}
                     className="mt-8 inline-flex items-center gap-2 rounded-full border border-[#E9E3DA] bg-[#FCFBF8] hover:border-[#111111] px-6 py-2.5 text-[13px] font-bold text-[#111111] transition-all"
                   >
-                    {t("sendAnother", language)}
+                    {t("subpages.contact.sendAnother")}
                   </button>
                 </motion.div>
               )}

@@ -4,8 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Mail, Sparkles } from "lucide-react";
 import SideRays from "@/components/ui/SideRays";
-import { useLanguage, LanguageSwitcher } from "@/components/LanguageProvider";
-import { t, translateSeeded } from "@/lib/translations";
+import { useLanguage } from "@/lib/contexts/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -30,24 +29,11 @@ function Reveal({
   );
 }
 
-const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect x="2" y="9" width="4" height="12" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-
-const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-  </svg>
-);
-
-const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
   </svg>
 );
 
@@ -57,8 +43,8 @@ interface TeamClientProps {
 }
 
 export default function TeamClient({ team, settings }: TeamClientProps) {
-  const { language } = useLanguage();
-  const contactEmail = settings?.contactEmail || "growthbridge16@gmail.com";
+  const contactEmail = settings?.contactEmail || "hello@growthbridge.live";
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <main className="min-h-screen bg-[#FCFBF8] text-[#111111] relative overflow-hidden pb-24">
@@ -99,13 +85,32 @@ export default function TeamClient({ team, settings }: TeamClientProps) {
             <span className="text-[17px] font-bold tracking-tight text-[#111111]">Growth Bridge</span>
           </a>
 
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-3.5">
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1 rounded-full border border-[#E9E3DA] bg-white p-1 text-[11px] font-bold shadow-sm">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "en" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("fr")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                FR
+              </button>
+            </div>
+
             <a
               href="/"
               className="inline-flex items-center gap-2 rounded-full border border-[#E9E3DA] bg-white px-5 py-2 text-[13px] font-bold text-[#111111] hover:border-[#111111] transition-all"
             >
-              <ArrowLeft size={14} /> {t("backToHome", language)}
+              <ArrowLeft size={14} /> {t("subpages.backToHome")}
             </a>
           </div>
         </div>
@@ -116,13 +121,13 @@ export default function TeamClient({ team, settings }: TeamClientProps) {
         <section className="mb-16">
           <Reveal>
             <span className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#6A6A6A]">
-              <Sparkles size={13} className="text-[#F4C542]" /> {translateSeeded("Dynamic Squad", language)}
+              <Sparkles size={13} className="text-[#F4C542]" /> {t("subpages.team.squad")}
             </span>
             <h1 className="mt-4 text-[clamp(36px,5vw,64px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-              {translateSeeded("Meet our team of builders.", language)}
+              {t("subpages.team.title")}
             </h1>
             <p className="mt-6 max-w-[580px] text-[16px] leading-[1.75] text-[#6A6A6A]">
-              {translateSeeded("We eliminate administrative filters. Our creators design, and our designers build. You talk directly with the engineers compiling your layout components.", language)}
+              {t("subpages.team.desc")}
             </p>
           </Reveal>
         </section>
@@ -143,12 +148,12 @@ export default function TeamClient({ team, settings }: TeamClientProps) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-[#FCFBF8] text-[#A8A296] text-[14px] font-bold">
-                      {t("noPhoto", language)}
+                      No photo uploaded
                     </div>
                   )}
                   {member.featured && (
                     <span className="absolute top-4 left-4 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wide bg-[#111111]/90 text-white rounded-full">
-                      {t("partner", language)}
+                      Partner
                     </span>
                   )}
                 </div>
@@ -160,43 +165,23 @@ export default function TeamClient({ team, settings }: TeamClientProps) {
                       {member.name}
                     </h3>
                     <p className="text-[13px] font-extrabold uppercase tracking-wider text-[#F4C542] mt-1">
-                      {translateSeeded(member.role, language)}
+                      {member.role}
                     </p>
                     <p className="text-[14px] leading-[1.65] text-[#6A6A6A] mt-4 font-medium">
-                      {translateSeeded(member.bio, language)}
+                      {member.bio}
                     </p>
                   </div>
 
                   {/* Social contacts */}
                   <div className="flex items-center gap-3 pt-4 border-t border-[#E9E3DA]/60">
-                    {member.linkedin && (
+                    {member.instagram && (
                       <a
-                        href={member.linkedin}
+                        href={member.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="h-8 w-8 rounded-full border border-[#E9E3DA] bg-[#FCFBF8] flex items-center justify-center text-[#6A6A6A] hover:text-[#111111] hover:border-[#111111] transition-colors"
                       >
-                        <LinkedinIcon className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {member.twitter && (
-                      <a
-                        href={member.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-8 w-8 rounded-full border border-[#E9E3DA] bg-[#FCFBF8] flex items-center justify-center text-[#6A6A6A] hover:text-[#111111] hover:border-[#111111] transition-colors"
-                      >
-                        <TwitterIcon className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {member.github && (
-                      <a
-                        href={member.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-8 w-8 rounded-full border border-[#E9E3DA] bg-[#FCFBF8] flex items-center justify-center text-[#6A6A6A] hover:text-[#111111] hover:border-[#111111] transition-colors"
-                      >
-                        <GithubIcon className="h-3.5 w-3.5" />
+                        <InstagramIcon className="h-3.5 w-3.5" />
                       </a>
                     )}
                     {member.email && (
@@ -220,16 +205,16 @@ export default function TeamClient({ team, settings }: TeamClientProps) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(244,197,66,0.1)_0%,_transparent_60%)] pointer-events-none" />
           <Reveal delay={0.3}>
             <h3 className="text-[26px] sm:text-[32px] font-black tracking-tight mb-4">
-              {t("haveBuildInMind", language)}
+              {t("subpages.team.ctaTitle")}
             </h3>
             <p className="text-[14px] text-white/60 max-w-[420px] mx-auto mb-8">
-              {t("discussTimeline", language)}
+              {t("subpages.team.ctaDesc")}
             </p>
             <a
               href="/contact"
               className="inline-flex items-center gap-2 rounded-full bg-[#F4C542] hover:bg-white text-[#111111] px-6 py-3.5 text-[14px] font-bold transition-colors"
             >
-              {t("startProjectCapital", language)}
+              {t("subpages.team.ctaBtn")}
             </a>
           </Reveal>
         </section>

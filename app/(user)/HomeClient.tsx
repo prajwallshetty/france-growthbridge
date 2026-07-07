@@ -13,8 +13,7 @@ import { ArrowRight, ArrowUpRight, Mail, Plus, Sparkles, Menu, X } from "lucide-
 import SideRays from "@/components/ui/SideRays";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
-import { useLanguage, LanguageSwitcher } from "@/components/LanguageProvider";
-import { t, translateSeeded } from "@/lib/translations";
+import { useLanguage } from "@/lib/contexts/LanguageContext";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -155,8 +154,8 @@ export default function HomeClient({
   settings,
   blogs,
 }: HomeClientProps) {
-  const { language } = useLanguage();
   const [loading, setLoading] = useState(true);
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     if (loading) {
@@ -174,18 +173,18 @@ export default function HomeClient({
   }, [loading]);
 
   // Configs with Fallbacks
-  const heroTitle = translateSeeded(homepage?.heroTitle || "Build your startup with Growth Bridge.", language);
-  const heroDescription = translateSeeded(homepage?.heroDescription || "A design and engineering partner for founders who value quality, clarity, and momentum. We bridge complex engineering with premium aesthetics.", language);
-  const heroBtnText = translateSeeded(homepage?.heroBtnText || "Start a project", language);
+  const heroTitle = language === "fr" ? t("hero.title") : (homepage?.heroTitle || t("hero.title"));
+  const heroDescription = language === "fr" ? t("hero.desc") : (homepage?.heroDescription || t("hero.desc"));
+  const heroBtnText = language === "fr" ? t("hero.cta") : (homepage?.heroBtnText || t("hero.cta"));
   const heroBtnUrl = homepage?.heroBtnUrl || "/contact";
 
   const showSelectedWork = homepage?.showSelectedWork !== false;
   const showProcess = homepage?.showProcess !== false;
   const showTestimonials = homepage?.showTestimonials !== false;
 
-  const contactEmail = settings?.contactEmail || "growthbridge16@gmail.com";
-  const phoneNumber = settings?.phoneNumber || "+33 744896755";
-  const officeAddress = translateSeeded(settings?.officeAddress || "121 avenue general frere 69008 Lyon France", language);
+  const contactEmail = settings?.contactEmail || "hello@growthbridge.live";
+  const phoneNumber = settings?.phoneNumber || "+91 62827 59863";
+  const officeAddress = settings?.officeAddress || "100 Pine St, San Francisco, CA";
   const socialTwitter = settings?.socialTwitter || "https://twitter.com/growthbridge";
   const socialLinkedin = settings?.socialLinkedin || "https://linkedin.com/company/growthbridge";
   const socialGithub = settings?.socialGithub || "https://github.com/growthbridge";
@@ -193,10 +192,10 @@ export default function HomeClient({
   const displayProjects = (projects || [])
     .filter((p) => p.featured)
     .map((p) => ({
-      title: translateSeeded(p.title, language),
-      category: translateSeeded(p.category, language),
-      description: translateSeeded(p.description, language),
-      result: translateSeeded(p.resultMetric || "+100% impact", language),
+      title: p.title,
+      category: p.category,
+      description: p.description,
+      result: p.resultMetric || "+100% impact",
       image: p.image || "/project-pulse.png",
       liveUrl: p.liveUrl || "",
     }));
@@ -229,17 +228,13 @@ export default function HomeClient({
     },
   ];
 
-  const rawServices = services && services.length > 0 ? services : defaultServices;
-  const displayServices = rawServices.map((s) => ({
-    title: translateSeeded(s.title, language),
-    description: translateSeeded(s.description, language),
-  }));
+  const displayServices = services && services.length > 0 ? services : defaultServices;
 
   const displayTestimonials = (testimonials || []).map((t) => ({
-    name: translateSeeded(t.name, language),
-    designation: translateSeeded(t.designation || t.title || "Client Partner", language),
+    name: t.name,
+    designation: t.designation || t.title || "Client Partner",
     image: t.image || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
-    quote: translateSeeded(t.quote, language),
+    quote: t.quote,
   }));
 
   return (
@@ -348,15 +343,15 @@ export default function HomeClient({
 /* ============================== NAV ============================== */
 
 function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: string }) {
-  const { language } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const links = [
-    { name: t("navAbout", language), link: "/#about" },
-    { name: t("navWork", language), link: "/#work" },
-    { name: t("navWhyUs", language), link: "/#why-us" },
-    { name: t("navProcess", language), link: "/#process" },
-    { name: t("navBlogs", language), link: "/#blogs" },
-    { name: t("navTeam", language), link: "/team" },
-    { name: t("navContact", language), link: "/contact" },
+    { name: t("nav.about"), link: "/#about" },
+    { name: t("nav.work"), link: "/#work" },
+    { name: t("nav.whyUs"), link: "/#why-us" },
+    { name: t("nav.process"), link: "/#process" },
+    { name: t("nav.blogs"), link: "/#blogs" },
+    { name: t("nav.team"), link: "/team" },
+    { name: t("nav.contact"), link: "/contact" },
   ];
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -401,9 +396,10 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
             <span className="text-[17px] font-bold tracking-tight text-[#111111]">Growth Bridge</span>
           </a>
 
+          {/* Center links with capsule hover animation */}
           <motion.div
             onMouseLeave={() => setHovered(null)}
-            className="hidden lg:flex flex-row items-center justify-center text-[14px] font-medium gap-1 flex-1 px-4 z-20"
+            className={`absolute inset-0 hidden flex-row items-center justify-center text-[14px] font-medium lg:flex gap-1`}
           >
             {links.map((item, idx) => (
               <a
@@ -424,9 +420,28 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
             ))}
           </motion.div>
 
-          {/* CTA Button */}
-          <div className="z-20 flex items-center gap-4">
-            <LanguageSwitcher />
+          {/* CTA Button & Language Switcher */}
+          <div className="z-20 flex items-center gap-3.5">
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1 rounded-full border border-[#E9E3DA] bg-white p-1 text-[11px] font-bold shadow-sm">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "en" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("fr")}
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                }`}
+              >
+                FR
+              </button>
+            </div>
+
             <MagneticButton
               href={heroBtnUrl}
               className="rounded-full bg-[#111111] px-5 py-2.5 text-[13px] font-semibold text-white transition-all hover:bg-[#2a2a2a] shadow-sm"
@@ -443,16 +458,13 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
               <span className="text-[15px] font-extrabold tracking-tight text-[#111111]">Growth Bridge</span>
               <span className="h-1.5 w-1.5 rounded-full bg-[#F4C542] animate-pulse" />
             </a>
-            <div className="flex items-center gap-2">
-              <LanguageSwitcher />
-              <button
-                className="h-9 w-9 flex items-center justify-center text-[#111111] hover:bg-[#111111]/5 rounded-full border border-[#E9E3DA] transition-all"
-                onClick={() => setIsMobileMenuOpen(true)}
-                aria-label="Open menu"
-              >
-                <Menu size={16} />
-              </button>
-            </div>
+            <button
+              className="h-9 w-9 flex items-center justify-center text-[#111111] hover:bg-[#111111]/5 rounded-full border border-[#E9E3DA] transition-all"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu size={16} />
+            </button>
           </div>
         </div>
 
@@ -479,7 +491,7 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
               >
                 <div>
                   <div className="flex justify-between items-center pb-6 border-b border-[#E9E3DA]">
-                    <span className="text-[15px] font-bold text-[#111111] uppercase tracking-wider">{t("navigation", language)}</span>
+                    <span className="text-[15px] font-bold text-[#111111] uppercase tracking-wider">Navigation</span>
                     <button
                       className="p-2 text-[#6A6A6A] hover:text-[#111111] rounded-full border border-[#E9E3DA] hover:border-[#111111] transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -503,7 +515,30 @@ function Nav({ heroBtnText, heroBtnUrl }: { heroBtnText: string; heroBtnUrl: str
                   </nav>
                 </div>
 
-                <div className="pt-6 border-t border-[#E9E3DA]">
+                <div className="pt-6 border-t border-[#E9E3DA] flex flex-col gap-4">
+                  {/* Language Switcher */}
+                  <div className="flex items-center justify-between px-2">
+                    <span className="text-[12px] font-bold text-[#6A6A6A] uppercase tracking-wider">Language</span>
+                    <div className="flex items-center gap-1 rounded-full border border-[#E9E3DA] bg-white p-1 text-[11px] font-bold">
+                      <button
+                        onClick={() => setLanguage("en")}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          language === "en" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                        }`}
+                      >
+                        EN
+                      </button>
+                      <button
+                        onClick={() => setLanguage("fr")}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          language === "fr" ? "bg-[#111111] text-white" : "text-[#6A6A6A] hover:text-[#111111]"
+                        }`}
+                      >
+                        FR
+                      </button>
+                    </div>
+                  </div>
+
                   <a
                     href={heroBtnUrl}
                     onClick={() => setIsMobileMenuOpen(false)}
@@ -537,7 +572,7 @@ function Hero({
   heroBtnText: string;
   heroBtnUrl: string;
 }) {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -614,7 +649,7 @@ function Hero({
                 href="#about"
                 className="flex items-center gap-2 rounded-full border border-[#E9E3DA] bg-white/50 px-7 py-4 text-[14px] font-semibold text-[#111111] transition-all hover:bg-white hover:border-[#111111]"
               >
-                {t("learnMore", language)}
+                {t("hero.learnMore")}
               </a>
             </motion.div>
           </div>
@@ -649,16 +684,17 @@ const STATS = [
 ];
 
 function StatsBand() {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
+  const statsList = t("stats") as typeof STATS;
   return (
     <div className="border-y border-[#E9E3DA] bg-white/30 py-12 rounded-[24px] px-8">
       <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
-        {STATS.map((s, i) => (
+        {statsList.map((s, i) => (
           <Reveal key={s.label} delay={i * 0.05}>
             <div className="text-[clamp(28px,3vw,38px)] font-extrabold tracking-tight text-[#111111]">
-              <CountUp to={parseInt(s.value)} suffix={translateSeeded(s.suffix, language)} />
+              <CountUp to={parseInt(s.value)} suffix={s.suffix} />
             </div>
-            <p className="mt-1 text-[13px] font-medium leading-[1.4] text-[#6A6A6A]">{translateSeeded(s.label, language)}</p>
+            <p className="mt-1 text-[13px] font-medium leading-[1.4] text-[#6A6A6A]">{s.label}</p>
           </Reveal>
         ))}
       </div>
@@ -682,9 +718,9 @@ const CAPABILITIES = [
 ];
 
 function CapabilitiesMarquee() {
-  const { language } = useLanguage();
-  const caps = CAPABILITIES.map((cap) => translateSeeded(cap, language));
-  const loop = [...caps, ...caps];
+  const { t } = useLanguage();
+  const capabilitiesList = t("capabilities") as string[];
+  const loop = [...capabilitiesList, ...capabilitiesList];
   return (
     <section className="overflow-hidden border-b border-[#E9E3DA] bg-[#111111] py-5">
       <div className="flex w-max animate-[marquee_28s_linear_infinite] gap-12">
@@ -715,28 +751,30 @@ function CapabilitiesMarquee() {
 /* ==================== ABOUT GROWTH BRIDGE ==================== */
 
 function AboutSection() {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   return (
     <section id="about" className="py-24 lg:py-32 border-t border-[#E9E3DA]">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12">
         <Reveal>
-          <Folio index={1} label={translateSeeded("About Growth Bridge", language)} />
+          <Folio index={1} label={t("about.folio")} />
         </Reveal>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] items-start mb-20">
           <Reveal>
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-              {translateSeeded("Bridging elite design with engineering.", language)}
+              {t("about.title1")}
+              <br />
+              {t("about.title2")}
             </h2>
           </Reveal>
 
           <Reveal delay={0.15}>
             <div className="flex flex-col gap-6 text-[15px] leading-[1.75] text-[#6A6A6A]">
               <p className="text-[18px] text-[#111111] font-medium leading-[1.6]">
-                {translateSeeded("We are a boutique studio of designers and developers, working directly with founders to build clean, premium interfaces that endure.", language)}
+                {t("about.p1")}
               </p>
               <p>
-                {translateSeeded("Most agencies pass your design from senior directors down to junior developers who copy templates. At Growth Bridge, we eliminate administrative overhead. Our creators code, and our coders design. The builder you talk to in our first call is the one writing the components for your platform.", language)}
+                {t("about.p2")}
               </p>
             </div>
           </Reveal>
@@ -749,12 +787,12 @@ function AboutSection() {
 }
 
 function ServicesSection({ servicesList }: { servicesList: any[] }) {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   return (
     <section id="services" className="py-24 lg:py-32 border-t border-[#E9E3DA]">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12">
         <Reveal>
-          <Folio index={3} label={translateSeeded("Our Disciplines", language)} />
+          <Folio index={3} label={t("servicesSection.folio")} />
         </Reveal>
         <Services servicesList={servicesList} />
       </div>
@@ -765,18 +803,19 @@ function ServicesSection({ servicesList }: { servicesList: any[] }) {
 /* ========================= SELECTED WORK ========================= */
 
 function SelectedWork({ projects, heroBtnUrl }: { projects: any[]; heroBtnUrl: string }) {
+  const { t } = useLanguage();
   return (
     <section id="work" className="py-24 lg:py-32 border-t border-[#E9E3DA]">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12">
         <Reveal>
-          <Folio index={2} label="Featured Projects" />
+          <Folio index={2} label={t("work.folio")} />
         </Reveal>
 
         <Reveal>
           <h2 className="text-[clamp(32px,4.5vw,56px)] font-extrabold tracking-[-0.03em] mb-4">
-            Projects that speak
+            {t("work.title1")}
             <br />
-            for themselves.
+            {t("work.title2")}
           </h2>
         </Reveal>
 
@@ -836,7 +875,7 @@ function SelectedWork({ projects, heroBtnUrl }: { projects: any[]; heroBtnUrl: s
                         rel="noopener noreferrer"
                         className="px-5 py-2.5 rounded-full bg-[#111111] hover:bg-[#F4C542] text-white hover:text-[#111111] text-[12px] font-bold border border-[#111111] hover:border-[#F4C542] transition-all duration-300 shadow-sm shrink-0"
                       >
-                        View Demo ↗
+                        {t("work.demo")}
                       </CardItem>
                     )}
                   </div>
@@ -852,7 +891,7 @@ function SelectedWork({ projects, heroBtnUrl }: { projects: any[]; heroBtnUrl: s
               href="/projects"
               className="inline-flex items-center gap-2 rounded-full border border-[#111111] bg-[#111111] hover:bg-transparent text-white hover:text-[#111111] px-8 py-4 text-[14px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md group"
             >
-              View all projects
+              {t("work.viewAll")}
               <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
             </a>
           </Reveal>
@@ -874,9 +913,11 @@ const INDUSTRIES = [
 ];
 
 function Industries() {
+  const { t } = useLanguage();
+  const industriesList = t("industries") as typeof INDUSTRIES;
   return (
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[8px] border border-[#E9E3DA] bg-[#E9E3DA] sm:grid-cols-2 lg:grid-cols-3">
-      {INDUSTRIES.map((ind, i) => (
+      {industriesList.map((ind, i) => (
         <motion.div
           key={ind.name}
           initial={{ opacity: 0, y: 16 }}
@@ -912,17 +953,18 @@ function Industries() {
 /* ============================ SERVICES ============================ */
 
 function Services({ servicesList }: { servicesList: any[] }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(0);
 
   return (
     <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.7fr_1.3fr]">
       <Reveal>
         <h2 className="text-[clamp(32px,4.5vw,56px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-          Six disciplines.
+          {t("servicesSection.title1")}
           <br />
-          One accountable
+          {t("servicesSection.title2")}
           <br />
-          team.
+          {t("servicesSection.title3")}
         </h2>
       </Reveal>
 
@@ -992,18 +1034,20 @@ const comparison = [
 ];
 
 function WhyChooseUs() {
+  const { t } = useLanguage();
+  const comparisonList = t("whyUs.comparison") as typeof comparison;
   return (
     <section id="why-us" className="border-t border-[#E9E3DA] bg-white/40 py-24 lg:py-32">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12">
         <Reveal>
-          <Folio index={4} label="Why Choose Us" />
+          <Folio index={4} label={t("whyUs.folio")} />
         </Reveal>
 
         <Reveal>
           <h2 className="max-w-[640px] text-[clamp(32px,4.5vw,56px)] font-extrabold leading-[1.05] tracking-[-0.03em] mb-14">
-            Built different,
+            {t("whyUs.title1")}
             <br />
-            and built to prove it.
+            {t("whyUs.title2")}
           </h2>
         </Reveal>
 
@@ -1011,19 +1055,19 @@ function WhyChooseUs() {
           <div className="grid grid-cols-2 border-b border-[#E9E3DA] bg-[#FCFBF8]">
             <div className="border-r border-[#E9E3DA] px-7 py-4">
               <span className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#A8A296]">
-                The usual way
+                {t("whyUs.usual")}
               </span>
             </div>
             <div className="px-7 py-4">
               <span className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#111111]">
-                The Growth Bridge way
+                {t("whyUs.growthBridge")}
               </span>
             </div>
           </div>
-          {comparison.map((row, i) => (
+          {comparisonList.map((row, i) => (
             <div
               key={i}
-              className={`grid grid-cols-2 ${i !== comparison.length - 1 ? "border-b border-[#E9E3DA]" : ""}`}
+              className={`grid grid-cols-2 ${i !== comparisonList.length - 1 ? "border-b border-[#E9E3DA]" : ""}`}
             >
               <div className="border-r border-[#E9E3DA] px-7 py-7">
                 <p className="text-[15px] leading-[1.7] text-[#A8A296]">{row.without}</p>
@@ -1056,24 +1100,27 @@ const processSteps = [
 ];
 
 function Process({ heroBtnUrl }: { heroBtnUrl: string }) {
+  const { t } = useLanguage();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 80%", "end 60%"],
   });
 
+  const stepsList = t("process.steps") as typeof processSteps;
+
   return (
     <section id="process" className="border-t border-[#E9E3DA] py-24 lg:py-32">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12">
         <Reveal>
-          <Folio index={5} label="Our process" />
+          <Folio index={5} label={t("process.folio")} />
         </Reveal>
 
         <Reveal>
           <h2 className="text-[clamp(32px,4.5vw,56px)] font-extrabold tracking-[-0.03em] mb-14">
-            Five stages, always
+            {t("process.title1")}
             <br />
-            in this order.
+            {t("process.title2")}
           </h2>
         </Reveal>
 
@@ -1085,7 +1132,7 @@ function Process({ heroBtnUrl }: { heroBtnUrl: string }) {
               style={{ scaleY: scrollYProgress, originY: 0 }}
               className="absolute left-[19px] top-5 bottom-5 w-px bg-[#111111]"
             />
-            {processSteps.map((step, i) => (
+            {stepsList.map((step, i) => (
               <Reveal key={step.number} delay={i * 0.05}>
                 <div className="relative flex gap-8 pb-12 last:pb-0">
                   <span className="relative z-10 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#111111] font-mono text-[12px] font-bold text-[#F4C542]">
@@ -1122,49 +1169,45 @@ function Process({ heroBtnUrl }: { heroBtnUrl: string }) {
 
 /* ======================== ENGAGEMENT MODELS ======================== */
 
-function EngagementModels({ heroBtnUrl }: { heroBtnUrl: string }) {
-  const { language } = useLanguage();
-  
-  const displayEngagements = [
-    {
-      name: language === "fr" ? "Sprint projet" : "Project sprint",
-      price: "18k € – 45k €",
-      cadence: language === "fr" ? "4–8 semaines" : "4–8 weeks",
-      detail: language === "fr" 
-        ? "Un livrable unique et délimité — une refonte de marque, un site de lancement ou une refonte web. Prix fixe, calendrier fixe."
-        : "A single, scoped deliverable — a rebrand, a launch site, a redesign. Fixed price, fixed timeline.",
-      featured: false,
-    },
-    {
-      name: language === "fr" ? "Partenariat de croissance" : "Growth partnership",
-      price: language === "fr" ? "12k € / mois" : "12k € / mo",
-      cadence: language === "fr" ? "3 mois minimum" : "3-month minimum",
-      detail: language === "fr"
-        ? "Travaux continus de design, de développement et de croissance sur votre feuille de route — le modèle choisi par la plupart de nos clients."
-        : "Ongoing design, build, and growth work across your roadmap — the model most of our clients land on.",
-      featured: true,
-    },
-    {
-      name: language === "fr" ? "Équipe intégrée" : "Embedded team",
-      price: language === "fr" ? "Sur mesure" : "Custom",
-      cadence: language === "fr" ? "6 mois et plus" : "6+ months",
-      detail: language === "fr"
-        ? "Une équipe dédiée travaillant directement avec vos outils et rituels, pour les entreprises qui grandissent au-delà d'un simple recrutement."
-        : "A dedicated pod working inside your existing tools and rituals, for teams scaling past what one hire could cover.",
-      featured: false,
-    }
-  ];
+const ENGAGEMENTS = [
+  {
+    name: "Project sprint",
+    price: "€18k – €45k",
+    cadence: "4–8 weeks",
+    detail: "A single, scoped deliverable — a rebrand, a launch site, a redesign. Fixed price, fixed timeline.",
+    featured: false,
+  },
+  {
+    name: "Growth partnership",
+    price: "€12k / mo",
+    cadence: "3-month minimum",
+    detail: "Ongoing design, build, and growth work across your roadmap — the model most of our clients land on.",
+    featured: true,
+  },
+  {
+    name: "Embedded team",
+    price: "Custom",
+    cadence: "6+ months",
+    detail: "A dedicated pod working inside your existing tools and rituals, for teams scaling past what one hire could cover.",
+    featured: false,
+  },
+];
 
+function EngagementModels({ heroBtnUrl }: { heroBtnUrl: string }) {
+  const { t } = useLanguage();
+  const engagementList = t("engagement.list") as typeof ENGAGEMENTS;
   return (
     <div className="mx-auto max-w-[1280px]">
       <Reveal>
         <h2 className="max-w-[640px] text-[clamp(32px,4.5vw,56px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-          {translateSeeded("Three ways to work together.", language)}
+          {t("engagement.title1")}
+          <br />
+          {t("engagement.title2")}
         </h2>
       </Reveal>
 
       <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {displayEngagements.map((e, i) => (
+        {engagementList.map((e, i) => (
           <motion.div
             key={e.name}
             initial={{ opacity: 0, y: 24 }}
@@ -1172,32 +1215,32 @@ function EngagementModels({ heroBtnUrl }: { heroBtnUrl: string }) {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, delay: i * 0.1, ease: EASE }}
             whileHover={{ y: -6 }}
-            className={`flex flex-col rounded-[10px] border p-8 transition-shadow ${e.featured
+            className={`flex flex-col rounded-[10px] border p-8 transition-shadow ${i === 1
               ? "border-[#111111] bg-[#111111] text-white shadow-[0_30px_60px_-25px_rgba(0,0,0,0.4)]"
               : "border-[#E9E3DA] bg-[#FCFBF8] hover:shadow-[0_20px_45px_-25px_rgba(0,0,0,0.15)]"
               }`}
           >
-            {e.featured && (
+            {i === 1 && (
               <span className="mb-4 w-fit rounded-full bg-[#F4C542] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-[#111111]">
-                {language === "fr" ? "Le plus fréquent" : "Most common"}
+                {t("engagement.featuredLabel")}
               </span>
             )}
             <h3 className="text-[22px] font-bold tracking-tight">{e.name}</h3>
-            <p className={`mt-4 text-[28px] font-extrabold tracking-tight ${e.featured ? "text-[#F4C542]" : ""}`}>
+            <p className={`mt-4 text-[28px] font-extrabold tracking-tight ${i === 1 ? "text-[#F4C542]" : ""}`}>
               {e.price}
             </p>
-            <p className={`text-[13px] ${e.featured ? "text-white/60" : "text-[#A8A296]"}`}>
+            <p className={`text-[13px] ${i === 1 ? "text-white/60" : "text-[#A8A296]"}`}>
               {e.cadence}
             </p>
-            <p className={`mt-5 flex-1 text-[14px] leading-[1.7] ${e.featured ? "text-white/80" : "text-[#6A6A6A]"}`}>
+            <p className={`mt-5 flex-1 text-[14px] leading-[1.7] ${i === 1 ? "text-white/80" : "text-[#6A6A6A]"}`}>
               {e.detail}
             </p>
             <a
               href={heroBtnUrl}
-              className={`mt-7 flex items-center gap-2 text-[14px] font-semibold ${e.featured ? "text-white" : "text-[#111111]"
+              className={`mt-7 flex items-center gap-2 text-[14px] font-semibold ${i === 1 ? "text-white" : "text-[#111111]"
                 }`}
             >
-              {language === "fr" ? "Nous contacter" : "Get in touch"} <ArrowRight size={15} />
+              {t("engagement.cta")} <ArrowRight size={15} />
             </a>
           </motion.div>
         ))}
@@ -1209,14 +1252,14 @@ function EngagementModels({ heroBtnUrl }: { heroBtnUrl: string }) {
 /* ============================== TESTIMONIALS SECTION ============================== */
 
 function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   const [active, setActive] = useState(0);
 
   return (
     <section className="border-t border-[#E9E3DA] py-24 lg:py-32 bg-white/20">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12 text-center">
         <Reveal>
-          <Folio index={6} label={translateSeeded("What clients say", language)} />
+          <Folio index={6} label={t("testimonials.folio")} />
         </Reveal>
 
         <div className="max-w-[800px] mx-auto mt-12 flex flex-col items-center">
@@ -1272,20 +1315,22 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
 /* ========================== LATEST BLOGS ========================== */
 
 function LatestBlogs({ blogs }: { blogs: any[] }) {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   const latestBlogs = (blogs || []).slice(0, 3);
 
   return (
     <section id="blogs" className="border-t border-[#E9E3DA] py-24 lg:py-32">
       <div className="mx-auto max-w-[1280px] px-6 md:px-12">
         <Reveal>
-          <Folio index={7} label={translateSeeded("Latest Blogs", language)} />
+          <Folio index={7} label={t("blogs.folio")} />
         </Reveal>
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-14">
           <Reveal>
             <h2 className="text-[clamp(32px,4.5vw,56px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-              {translateSeeded("Latest insights & field notes.", language)}
+              {t("blogs.title1")}
+              <br />
+              {t("blogs.title2")}
             </h2>
           </Reveal>
         </div>
@@ -1304,9 +1349,9 @@ function LatestBlogs({ blogs }: { blogs: any[] }) {
                     alt={b.title}
                   />
                   <div className="absolute top-4 left-4 flex gap-1.5 flex-wrap">
-                    {(b.tags || []).slice(0, 2).map((tagStr: string) => (
-                      <span key={tagStr} className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide bg-[#111111]/90 text-white rounded-full">
-                        {translateSeeded(tagStr, language)}
+                    {(b.tags || []).slice(0, 2).map((t: string) => (
+                      <span key={t} className="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide bg-[#111111]/90 text-white rounded-full">
+                        {t}
                       </span>
                     ))}
                   </div>
@@ -1315,22 +1360,22 @@ function LatestBlogs({ blogs }: { blogs: any[] }) {
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#A8A296]">
-                      {b.readTime || 3} {t("readTime", language)}
+                      {b.readTime || 3} {t("blogs.readTime")}
                     </span>
                     <h3 className="text-[18px] font-black text-[#111111] tracking-tight leading-[1.3] mt-2 group-hover:text-[#F4C542] transition-colors">
-                      {translateSeeded(b.title, language)}
+                      {b.title}
                     </h3>
                     <p className="text-[13px] leading-[1.6] text-[#6A6A6A] mt-3 line-clamp-2">
-                      {translateSeeded(b.subtitle || b.content, language)}
+                      {b.subtitle || b.content}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#E9E3DA]/60">
                     <span className="text-[12px] font-semibold text-[#6A6A6A]">
-                      {t("by", language)} {b.author || "Mohammed Aiman"}
+                      {t("blogs.by")} {b.author || "Growth Bridge Team"}
                     </span>
                     <span className="text-[#111111] text-[12px] font-bold group-hover:translate-x-1.5 transition-transform flex items-center gap-1">
-                      {t("readArticle", language)} <ArrowRight size={13} />
+                      {t("blogs.readArticle")} <ArrowRight size={13} />
                     </span>
                   </div>
                 </div>
@@ -1365,28 +1410,29 @@ const FAQS = [
 ];
 
 function FaqSection() {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const faqList = t("faq.list") as typeof FAQS;
   return (
     <section className="border-t border-[#E9E3DA] py-24 lg:py-32 bg-white/40">
       <div className="mx-auto max-w-[800px] px-6">
         <Reveal>
-          <Folio index={8} label={translateSeeded("FAQ", language)} />
+          <Folio index={8} label={t("faq.folio")} />
         </Reveal>
 
         <Reveal delay={0.1}>
           <div className="text-center mb-16">
             <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#6A6A6A]">
-              {t("commonQuestions", language)}
+              {t("faq.sub")}
             </span>
             <h2 className="mt-4 text-[36px] font-extrabold tracking-tight text-[#111111]">
-              {translateSeeded("Frequently Asked Questions", language)}
+              {t("faq.title")}
             </h2>
           </div>
         </Reveal>
 
         <div className="flex flex-col gap-4">
-          {FAQS.map((faq, idx) => {
+          {faqList.map((faq, idx) => {
             const isOpen = openIdx === idx;
             return (
               <Reveal key={idx} delay={idx * 0.05}>
@@ -1395,7 +1441,7 @@ function FaqSection() {
                     onClick={() => setOpenIdx(isOpen ? null : idx)}
                     className="w-full flex justify-between items-center p-6 text-left font-bold text-[16px] text-[#111111]"
                   >
-                    <span>{translateSeeded(faq.q, language)}</span>
+                    <span>{faq.q}</span>
                     <span className="h-6 w-6 rounded-full border border-[#E9E3DA] flex items-center justify-center shrink-0 text-[#6A6A6A]">
                       {isOpen ? "−" : "+"}
                     </span>
@@ -1409,7 +1455,7 @@ function FaqSection() {
                         transition={{ duration: 0.3, ease: EASE }}
                       >
                         <div className="p-6 pt-0 border-t border-[#E9E3DA]/60 text-[14px] leading-[1.65] text-[#6A6A6A]">
-                          {translateSeeded(faq.a, language)}
+                          {faq.a}
                         </div>
                       </motion.div>
                     )}
@@ -1427,7 +1473,7 @@ function FaqSection() {
 /* ============================== CONTACT ============================== */
 
 function ContactCta({ contactEmail, heroBtnUrl }: { contactEmail: string; heroBtnUrl: string }) {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   const ref = useRef(null);
   const [pos, setPos] = useState({ x: 50, y: 50 });
 
@@ -1455,17 +1501,19 @@ function ContactCta({ contactEmail, heroBtnUrl }: { contactEmail: string; heroBt
       <div className="relative mx-auto max-w-[800px] px-6">
         <Reveal>
           <span className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F4C542]">
-            {t("getInTouch", language)}
+            {t("contact.sub")}
           </span>
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="mt-5 text-[clamp(36px,5.5vw,72px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-            {translateSeeded("Let's build something worth talking about.", language)}
+            {t("contact.title1")}
+            <br />
+            {t("contact.title2")}
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="mx-auto mt-6 max-w-[480px] text-[17px] leading-[1.7] text-white/60">
-            {translateSeeded("Tell us what's not working yet. We'll tell you, honestly, whether we're the right team to fix it.", language)}
+            {t("contact.desc")}
           </p>
         </Reveal>
         <Reveal delay={0.3}>
@@ -1473,7 +1521,7 @@ function ContactCta({ contactEmail, heroBtnUrl }: { contactEmail: string; heroBt
             href={`mailto:${contactEmail}`}
             className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#F4C542] px-8 py-4 text-[14px] font-semibold text-[#111111] transition-colors hover:bg-[#fff]"
           >
-            {translateSeeded("Start a project", language)} <ArrowRight size={18} />
+            {t("contact.cta")} <ArrowRight size={18} />
           </MagneticButton>
           <div className="mt-8 flex items-center justify-center gap-2 text-[14px] text-white/60">
             <Mail size={15} /> {contactEmail}
